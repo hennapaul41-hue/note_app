@@ -1,4 +1,4 @@
-import '../model/user_settings.dart';
+import '../models/user_settings.dart';
 
 class SettingsController {
   final UserSettings model;
