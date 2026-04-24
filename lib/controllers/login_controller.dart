@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import '../services/local_storage.dart';
+import '../routes/app_routes.dart';
 
 class LoginController {
   final storage = LocalStorage();
 
   Future<void> login(
-      BuildContext context, String email, String password) async {
-    if (email.isEmpty || password.isEmpty) {
+      BuildContext context, String username, String password) async {
+    if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enter email and password")),
+        const SnackBar(content: Text("Enter username and password")),
       );
       return;
     }
 
-    if (!email.endsWith("@gmail.com")) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Use Gmail account")),
-      );
-      return;
-    }
+    // ✅ SAVE USER DATA
+    await storage.setUsername(username);
+    await storage.setPassword(password);
 
-    // ✅ store login
+    // ✅ LOGIN STATUS
     await storage.setLogin(true);
 
-    // ✅ use ROUTE
-    Navigator.pushReplacementNamed(context, '/home');
+    // go to home
+    Navigator.pushReplacementNamed(context, AppRoutes.home);
   }
 }

@@ -9,7 +9,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final email = TextEditingController();
+  final username = TextEditingController();
   final password = TextEditingController();
   final controller = LoginController();
 
@@ -22,29 +22,22 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 📝 App Title
             const Text(
               "My Notebook",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 10),
-
             const Text(
               "Write your thoughts anytime",
               style: TextStyle(color: Colors.grey),
             ),
-
             const SizedBox(height: 30),
 
-            // 📧 Email
+            // 👤 USERNAME
             TextField(
-              controller: email,
+              controller: username,
               decoration: InputDecoration(
-                labelText: "Email",
+                labelText: "Username",
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -55,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
             const SizedBox(height: 15),
 
-            // 🔒 Password
+            // 🔒 PASSWORD
             TextField(
               controller: password,
               obscureText: true,
@@ -71,14 +64,14 @@ class _LoginPageState extends State<LoginPage> {
 
             const SizedBox(height: 20),
 
-            // 🔘 Login button
+            // 🔑 LOGIN BUTTON
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
                 onPressed: () => controller.login(
                   context,
-                  email.text.trim(),
+                  username.text.trim(),
                   password.text.trim(),
                 ),
                 child: const Text("Login"),

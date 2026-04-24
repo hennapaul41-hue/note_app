@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:note_app/models/note_model.dart';
-import '../controllers/home_fuc.dart';
+import '../controllers/note_controller.dart';
+import '../models/note_model.dart';
+import '../routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,84 +11,110 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeController controller = HomeController();
-  List<Note> notes = [];
+  final NoteController controller = NoteController();
 
   @override
   void initState() {
     super.initState();
-    load();
+    init();
   }
 
-  // 🔄 Load notes
-  void load() async {
-    final data = await controller.loadNotes();
-    setState(() {
-      notes = data;
-    });
+  Future<void> init() async {
+    await controller.loadNotes();
+    setState(() {});
+  }
+
+  void openNoteDialog({Note? note, int? index}) {
+    final titleController = TextEditingController(text: note?.title ?? '');
+    final contentController = TextEditingController(text: note?.content ?? '');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(note == null ? "Add Note" : "Edit Note"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: "Title")),
+              TextField(
+                  controller: contentController,
+                  decoration: const InputDecoration(labelText: "Content")),
+            ],
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel")),
+            ElevatedButton(
+              onPressed: () async {
+                final newNote = Note(
+                  title: titleController.text,
+                  content: contentController.text,
+                );
+
+                if (note == null) {
+                  await controller.addNote(newNote);
+                } else {
+                  await controller.updateNote(index!, newNote);
+                }
+
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteNote(int index) async {
+    await controller.deleteNote(index);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final notes = controller.notes;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Notes"),
+        title: const Text("Notes"),
         actions: [
-          // 🚪 Logout
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => controller.logout(context),
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.settings);
+            },
           ),
         ],
       ),
-
-      // 📄 Notes List
       body: notes.isEmpty
-          ? const Center(
-              child: Text(
-                "No notes yet",
-                style: TextStyle(fontSize: 16),
-              ),
-            )
+          ? const Center(child: Text("No notes yet"))
           : ListView.builder(
               itemCount: notes.length,
               itemBuilder: (context, index) {
                 final note = notes[index];
-
                 return Card(
-                  margin: const EdgeInsets.all(10),
                   child: ListTile(
-                    title: Text(
-                      note.title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(
-                      note.content,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    // ✏️ + 🗑 Actions
+                    title: Text(note.title),
+                    subtitle: Text(note.content),
+                    onTap: () => openNoteDialog(note: note, index: index),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ✏️ Edit
                         IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () => controller.editNote(
-                            context,
-                            index,
-                            note,
-                            load,
-                          ),
+                          icon: const Icon(Icons.edit),
+                          onPressed: () =>
+                              openNoteDialog(note: note, index: index),
                         ),
-
-                        // 🗑 Delete
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => controller.deleteNote(index, load),
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => deleteNote(index),
                         ),
                       ],
                     ),
@@ -95,10 +122,8 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-
-      // ➕ Add Note Button
       floatingActionButton: FloatingActionButton(
-        onPressed: () => controller.addNote(context, load),
+        onPressed: () => openNoteDialog(),
         child: const Icon(Icons.add),
       ),
     );

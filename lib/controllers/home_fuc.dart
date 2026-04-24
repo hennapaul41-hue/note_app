@@ -1,107 +1,136 @@
 import 'package:flutter/material.dart';
+import '../controllers/note_controller.dart';
 import '../models/note_model.dart';
-import '../services/local_storage.dart';
-import 'note_controller.dart';
+import '../routes/app_routes.dart';
 
-class HomeController {
-  final NoteController noteController = NoteController();
-  final storage = LocalStorage();
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
-  // 📄 Load notes
-  Future<List<Note>> loadNotes() async {
-    return await noteController.getNotes();
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final NoteController controller = NoteController();
+
+  @override
+  void initState() {
+    super.initState();
+    init();
   }
 
-  // ➕ Add Note
-  void addNote(BuildContext context, Function refresh) {
-    TextEditingController title = TextEditingController();
-    TextEditingController content = TextEditingController();
+  Future<void> init() async {
+    await controller.loadNotes();
+    setState(() {});
+  }
+
+  // ✅ ADD / EDIT DIALOG
+  void openNoteDialog({Note? note, int? index}) {
+    final titleController = TextEditingController(text: note?.title ?? '');
+    final contentController = TextEditingController(text: note?.content ?? '');
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Add Note"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: title,
-              decoration: const InputDecoration(hintText: "Title"),
+      builder: (context) {
+        return AlertDialog(
+          title: Text(note == null ? "Add Note" : "Edit Note"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: "Title"),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: contentController,
+                decoration: const InputDecoration(labelText: "Content"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: content,
-              decoration: const InputDecoration(hintText: "Content"),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              if (title.text.isNotEmpty && content.text.isNotEmpty) {
-                await noteController.addNote(
-                  Note(title: title.text, content: content.text),
+            ElevatedButton(
+              onPressed: () {
+                final newNote = Note(
+                  title: titleController.text,
+                  content: contentController.text,
                 );
+
+                setState(() {
+                  if (note == null) {
+                    controller.addNote(newNote);
+                  } else {
+                    controller.updateNote(index!, newNote);
+                  }
+                });
+
                 Navigator.pop(context);
-                refresh();
-              }
-            },
-            child: const Text("Save"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ✏️ Edit Note
-  void editNote(BuildContext context, int index, Note note, Function refresh) {
-    TextEditingController title = TextEditingController(text: note.title);
-    TextEditingController content = TextEditingController(text: note.content);
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Edit Note"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: title),
-            const SizedBox(height: 10),
-            TextField(controller: content, maxLines: 3),
+              },
+              child: const Text("Save"),
+            ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await noteController.updateNote(
-                index,
-                Note(title: title.text, content: content.text),
-              );
-              Navigator.pop(context);
-              refresh();
-            },
-            child: const Text("Update"),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  // 🗑 Delete Note
-  Future<void> deleteNote(int index, Function refresh) async {
-    await noteController.deleteNote(index);
-    refresh();
+  void deleteNote(int index) {
+    setState(() {
+      controller.deleteNote(index);
+    });
   }
 
-  // 🚪 Logout
-  Future<void> logout(BuildContext context) async {
-    await storage.setLogin(false);
+  @override
+  Widget build(BuildContext context) {
+    final notes = controller.notes;
 
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/welcome',
-      (route) => false,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Notes"),
+        actions: [
+          // ⚙️ SETTINGS ICON
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.settings);
+            },
+          ),
+        ],
+      ),
+
+      body: notes.isEmpty
+          ? const Center(child: Text("No notes yet"))
+          : ListView.builder(
+              itemCount: notes.length,
+              itemBuilder: (context, index) {
+                final note = notes[index];
+
+                return Card(
+                  child: ListTile(
+                    title: Text(note.title),
+                    subtitle: Text(note.content),
+                    onTap: () => openNoteDialog(
+                      note: note,
+                      index: index,
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => deleteNote(index),
+                    ),
+                  ),
+                );
+              },
+            ),
+
+      // ➕ ADD BUTTON
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => openNoteDialog(),
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
