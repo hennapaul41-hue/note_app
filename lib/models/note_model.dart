@@ -4,12 +4,10 @@ class Note {
 
   Note({required this.title, required this.content});
 
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'content': content,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'content': content,
+      };
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
