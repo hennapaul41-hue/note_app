@@ -13,6 +13,7 @@ class LoginPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(color: Colors.white),
+
           Positioned(
             top: -120,
             left: -50,
@@ -32,12 +33,14 @@ class LoginPage extends StatelessWidget {
               ),
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 28),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 80),
+
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -49,7 +52,9 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 8),
+
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -57,7 +62,9 @@ class LoginPage extends StatelessWidget {
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
+
                 const SizedBox(height: 40),
+
                 TextField(
                   controller: controller.username,
                   decoration: InputDecoration(
@@ -69,20 +76,37 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 20),
-                TextField(
-                  controller: controller.password,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
+
+                Obx(
+                  () => TextField(
+                    controller: controller.password,
+                    obscureText: controller.isPasswordHidden.value,
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.isPasswordHidden.value
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          controller.isPasswordHidden.value =
+                              !controller.isPasswordHidden.value;
+                        },
+                      ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 35),
+
                 SizedBox(
                   width: double.infinity,
                   height: 55,

@@ -8,6 +8,7 @@ class SettingsController extends GetxController {
   final passwordController = TextEditingController();
 
   final isEditing = false.obs;
+  final isPasswordHidden = true.obs;
 
   final LocalStorage storage = LocalStorage();
 
