@@ -7,6 +7,8 @@ class LoginController extends GetxController {
   final username = TextEditingController();
   final password = TextEditingController();
 
+  var isPasswordHidden = true.obs;
+
   final LocalStorage storage = LocalStorage();
 
   void login() async {
@@ -21,7 +23,6 @@ class LoginController extends GetxController {
         'Login Failed',
         'Please enter Username and Password',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade100,
       );
     }
   }
