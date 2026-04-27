@@ -1,16 +1,44 @@
-import '../models/user_settings.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
+import '../services/local_storage.dart';
 
-class SettingsController {
-  final UserSettings model;
+class SettingsController extends GetxController {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  SettingsController({required this.model});
+  final isEditing = false.obs;
 
-  void changeEmail(String newEmail) => model.updateEmail(newEmail);
-  void changePassword(String newPassword) => model.updatePassword(newPassword);
+  final LocalStorage storage = LocalStorage();
 
-  Future<void> saveSettings() async => await model.save();
+  @override
+  void onInit() {
+    super.onInit();
+    loadData();
+  }
 
-  void logout() {
-    print("User logged out");
+  Future<void> loadData() async {
+    usernameController.text = await storage.getUsername() ?? '';
+    passwordController.text = await storage.getPassword() ?? '';
+    update();
+  }
+
+  Future<void> save() async {
+    await storage.setUsername(usernameController.text.trim());
+    await storage.setPassword(passwordController.text.trim());
+
+    isEditing.value = false;
+
+    Get.snackbar(
+      "Success",
+      "Updated successfully",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.blue.shade100,
+    );
+  }
+
+  Future<void> logout() async {
+    await storage.clearSession();
+    Get.offAllNamed(AppRoutes.login);
   }
 }

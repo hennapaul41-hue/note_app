@@ -1,12 +1,20 @@
+import 'package:get/get.dart';
 import '../models/note_model.dart';
 import '../services/local_storage.dart';
 
-class NoteController {
+class NoteController extends GetxController {
   final LocalStorage _storage = LocalStorage();
-  List<Note> notes = [];
+
+  var notes = <Note>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadNotes();
+  }
 
   Future<void> loadNotes() async {
-    notes = await _storage.getNotes();
+    notes.value = await _storage.getNotes();
   }
 
   Future<void> addNote(Note note) async {
@@ -16,6 +24,7 @@ class NoteController {
 
   Future<void> updateNote(int index, Note note) async {
     notes[index] = note;
+    notes.refresh();
     await _storage.saveNotes(notes);
   }
 

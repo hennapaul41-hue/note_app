@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
-import '../services/local_storage.dart';
+import 'package:get/get.dart';
 import '../routes/app_routes.dart';
+import '../services/local_storage.dart';
 
-class LoginController {
-  final storage = LocalStorage();
+class LoginController extends GetxController {
+  final username = TextEditingController();
+  final password = TextEditingController();
 
-  Future<void> login(
-      BuildContext context, String username, String password) async {
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enter username and password")),
+  final LocalStorage storage = LocalStorage();
+
+  void login() async {
+    if (username.text.trim().isNotEmpty && password.text.trim().isNotEmpty) {
+      await storage.setUsername(username.text.trim());
+      await storage.setPassword(password.text.trim());
+      await storage.setLoggedIn(true);
+
+      Get.offAllNamed(AppRoutes.home);
+    } else {
+      Get.snackbar(
+        'Login Failed',
+        'Please enter Username and Password',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
       );
-      return;
     }
-
-    // ✅ SAVE USER DATA
-    await storage.setUsername(username);
-    await storage.setPassword(password);
-
-    // ✅ LOGIN STATUS
-    await storage.setLogin(true);
-
-    // go to home
-    Navigator.pushReplacementNamed(context, AppRoutes.home);
   }
 }
