@@ -120,7 +120,7 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 65),
 
                 Expanded(
                   child: Obx(

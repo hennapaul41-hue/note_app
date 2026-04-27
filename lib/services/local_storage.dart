@@ -28,6 +28,11 @@ class LocalStorage {
     await prefs.setBool('isLoggedIn', value);
   }
 
+  Future<bool> getLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
+  }
+
   Future<void> clearSession() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -35,15 +40,18 @@ class LocalStorage {
 
   Future<void> saveNotes(List<Note> notes) async {
     final prefs = await SharedPreferences.getInstance();
+
     List<String> noteList =
         notes.map((note) => jsonEncode(note.toJson())).toList();
+
     await prefs.setStringList('notes', noteList);
   }
 
   Future<List<Note>> getNotes() async {
     final prefs = await SharedPreferences.getInstance();
+
     List<String> noteList = prefs.getStringList('notes') ?? [];
 
-    return noteList.map((note) => Note.fromJson(jsonDecode(note))).toList();
+    return noteList.map((e) => Note.fromJson(jsonDecode(e))).toList();
   }
 }

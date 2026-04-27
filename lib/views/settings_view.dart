@@ -60,7 +60,7 @@ class SettingsPage extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 100),
 
                   TextField(
                     controller: controller.usernameController,
@@ -96,7 +96,7 @@ class SettingsPage extends StatelessWidget {
                   if (controller.isEditing.value)
                     SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: 45,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue.shade700,
@@ -112,22 +112,29 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ),
 
-                  const Spacer(),
+                  const SizedBox(height: 50),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                  Center(
+                    child: SizedBox(
+                      width: 150,
+                      height: 38,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            25,
+                            118,
+                            210,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                      ),
-                      onPressed: controller.logout,
-                      child: const Text(
-                        "Logout",
-                        style: TextStyle(color: Colors.black87),
+                        onPressed: controller.logout,
+                        child: const Text(
+                          "Logout",
+                          style: TextStyle(color: Colors.black87),
+                        ),
                       ),
                     ),
                   ),
