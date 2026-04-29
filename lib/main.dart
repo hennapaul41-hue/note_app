@@ -4,11 +4,11 @@ import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 import 'services/local_storage.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final LocalStorage storage = LocalStorage();
-  bool isLoggedIn = await storage.getLoggedIn();
+  final storage = LocalStorage();
+  final isLoggedIn = await storage.getLoggedIn();
 
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
@@ -23,9 +23,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Note App',
+      theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.welcome,
       getPages: AppPages.pages,
-      theme: ThemeData(primarySwatch: Colors.blue),
     );
   }
 }

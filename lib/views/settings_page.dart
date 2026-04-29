@@ -64,6 +64,7 @@ class SettingsPage extends StatelessWidget {
 
                     const SizedBox(height: 100),
 
+                    // Username (editable when editing mode is enabled)
                     TextField(
                       controller: controller.usernameController,
                       enabled: controller.isEditing.value,
@@ -79,12 +80,13 @@ class SettingsPage extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
+                    // New Password
                     TextField(
-                      controller: controller.passwordController,
+                      controller: controller.newPasswordController,
                       enabled: controller.isEditing.value,
                       obscureText: controller.isPasswordHidden.value,
                       decoration: InputDecoration(
-                        labelText: "Password",
+                        labelText: "New Password",
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -100,6 +102,23 @@ class SettingsPage extends StatelessWidget {
                             controller.isPasswordHidden.value =
                                 !controller.isPasswordHidden.value;
                           },
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Confirm Password
+                    TextField(
+                      controller: controller.confirmPasswordController,
+                      enabled: controller.isEditing.value,
+                      obscureText: controller.isPasswordHidden.value,
+                      decoration: InputDecoration(
+                        labelText: "Confirm Password",
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),

@@ -8,6 +8,11 @@ class LocalStorage {
     await prefs.setString('username', username);
   }
 
+  Future<void> setEmail(String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+  }
+
   Future<void> setPassword(String password) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('password', password);
@@ -16,6 +21,11 @@ class LocalStorage {
   Future<String?> getUsername() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('username');
+  }
+
+  Future<String?> getEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email');
   }
 
   Future<String?> getPassword() async {
@@ -35,27 +45,25 @@ class LocalStorage {
 
   Future<void> clearSession() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+    await prefs.remove('password');
+    await prefs.remove('email');
     await prefs.setBool('isLoggedIn', false);
   }
 
+  // Notes
   Future<void> saveNotes(List<Note> notes) async {
     final prefs = await SharedPreferences.getInstance();
-
-    String? username = prefs.getString('username') ?? 'default';
-
+    String username = prefs.getString('username') ?? 'default';
     List<String> noteList =
         notes.map((note) => jsonEncode(note.toJson())).toList();
-
     await prefs.setStringList('notes_$username', noteList);
   }
 
   Future<List<Note>> getNotes() async {
     final prefs = await SharedPreferences.getInstance();
-
-    String? username = prefs.getString('username') ?? 'default';
-
+    String username = prefs.getString('username') ?? 'default';
     List<String> noteList = prefs.getStringList('notes_$username') ?? [];
-
     return noteList.map((e) => Note.fromJson(jsonDecode(e))).toList();
   }
 }

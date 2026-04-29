@@ -5,7 +5,7 @@ import '../models/note_model.dart';
 import '../routes/app_routes.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
+  HomePage({super.key}); // ✅ non-const constructor
 
   final NoteController controller = Get.put(NoteController());
 

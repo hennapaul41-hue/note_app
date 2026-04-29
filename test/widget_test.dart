@@ -10,16 +10,16 @@ void main() {
     await tester.pumpAndSettle();
 
     // ✅ Check Welcome Page UI
-    expect(find.text('Note App'), findsOneWidget);
-    expect(find.text('Continue'), findsOneWidget);
+    expect(find.text('Welcome to My Notebook'), findsOneWidget);
+    expect(find.text('Login'), findsOneWidget);
   });
 
   testWidgets('Navigate from Welcome to Login', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
-    // 👆 Tap Continue button
-    await tester.tap(find.text('Continue'));
+    // 👆 Tap Login button
+    await tester.tap(find.text('Login'));
     await tester.pumpAndSettle();
 
     // ✅ Now Login page should appear
