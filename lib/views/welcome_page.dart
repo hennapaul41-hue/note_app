@@ -8,33 +8,21 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            color: Colors.white,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent, // ✅ transparent AppBar
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue[300]!, Colors.blue[700]!],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          Positioned(
-            top: -120,
-            left: -50,
-            right: -50,
-            child: Container(
-              height: 300,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue.shade300, Colors.blue.shade700],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(180),
-                  bottomRight: Radius.circular(180),
-                ),
-              ),
-            ),
-          ),
-          Padding(
+        ),
+        child: Center(
+          child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -45,14 +33,14 @@ class WelcomePage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black12, blurRadius: 12),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black26, blurRadius: 12),
                     ],
                   ),
                   child: Icon(
                     Icons.note_alt_rounded,
                     size: 80,
-                    color: Colors.blue.shade700,
+                    color: Colors.blue[700],
                   ),
                 ),
                 const SizedBox(height: 25),
@@ -61,16 +49,16 @@ class WelcomePage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Organize your thoughts, save important notes, and access them anytime.\nYour personal digital notebook.',
+                  'Organize your thoughts, save important notes, and access them anytime.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.black54,
+                    color: Colors.white70,
                     height: 1.5,
                   ),
                 ),
@@ -80,18 +68,20 @@ class WelcomePage extends StatelessWidget {
                   height: 55,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
+                      backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),
-                      elevation: 8,
                     ),
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.login);
-                    },
-                    child: const Text(
+                    // ✅ Navigate to RegistrationPage
+                    onPressed: () => Get.toNamed(AppRoutes.registration),
+                    child: Text(
                       'Continue',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.blue[700],
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -99,7 +89,7 @@ class WelcomePage extends StatelessWidget {
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

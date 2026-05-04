@@ -1,73 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/signup_controller.dart';
+import '../controllers/registration_controller.dart';
+import '../routes/app_routes.dart';
 
-class SignUpPage extends StatelessWidget {
-  SignUpPage({super.key});
-  final SignUpController controller = Get.put(SignUpController());
+class RegistrationPage extends StatelessWidget {
+  RegistrationPage({super.key});
+  final RegistrationController controller = Get.put(RegistrationController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(color: Colors.white),
-
-          // Gradient header
-          Positioned(
-            top: -120,
-            left: -50,
-            right: -50,
-            child: Container(
-              height: 320,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue.shade300, Colors.blue.shade700],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(180),
-                  bottomRight: Radius.circular(180),
-                ),
-              ),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue[300]!, Colors.blue[700]!],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-
-          Padding(
+        ),
+        child: Center(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 28),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 80),
-
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade800,
-                    ),
+                Text(
+                  "Create Account",
+                  style: const TextStyle(
+                    fontSize: 34,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Create your account',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                const Text(
+                  "Sign up to start saving notes",
+                  style: TextStyle(color: Colors.white70),
                 ),
-
                 const SizedBox(height: 40),
 
-                // Username
+                // Username field
                 TextField(
                   controller: controller.username,
                   decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.person),
                     hintText: 'Username',
                     filled: true,
                     fillColor: Colors.white,
@@ -76,13 +52,13 @@ class SignUpPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
-                // Email
+                // Email field
                 TextField(
                   controller: controller.email,
                   decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.email),
                     hintText: 'Email (must be Gmail)',
                     filled: true,
                     fillColor: Colors.white,
@@ -91,15 +67,15 @@ class SignUpPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
-                // Password
+                // Password field
                 Obx(
                   () => TextField(
                     controller: controller.password,
                     obscureText: controller.isPasswordHidden.value,
                     decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock),
                       hintText: 'Password',
                       filled: true,
                       fillColor: Colors.white,
@@ -120,7 +96,6 @@ class SignUpPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 35),
 
                 // Sign Up button
@@ -129,22 +104,39 @@ class SignUpPage extends StatelessWidget {
                   height: 55,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue[700],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
                     onPressed: controller.signUp,
                     child: const Text(
-                      'SIGN UP',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      "SIGN UP",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Back to Welcome
+                Center(
+                  child: TextButton(
+                    onPressed: () => Get.offAllNamed(AppRoutes.welcome),
+                    child: const Text(
+                      "Back to Welcome",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

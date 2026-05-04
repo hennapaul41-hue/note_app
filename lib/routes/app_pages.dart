@@ -1,20 +1,19 @@
 import 'package:get/get.dart';
 import '../views/welcome_page.dart';
-import '../views/login_page.dart';
+import '../views/registration_page.dart';
 import '../views/home_page.dart';
+import '../views/add_note_page.dart';
+import '../views/edit_note_page.dart';
 import '../views/settings_page.dart';
+import 'app_routes.dart';
 
-class AppRoutes {
-  static const welcome = '/welcome';
-  static const login = '/login';
-  static const home = '/home';
-  static const settings = '/settings';
-
-  // 👇 This is the missing getter
-  static final routes = [
-    GetPage(name: welcome, page: () => WelcomePage()),
-    GetPage(name: login, page: () => LoginPage()),
-    GetPage(name: home, page: () => HomePage()),
-    GetPage(name: settings, page: () => SettingsPage()),
+class AppPages {
+  static final pages = [
+    GetPage(name: AppRoutes.welcome, page: () => const WelcomePage()),
+    GetPage(name: AppRoutes.registration, page: () => RegistrationPage()),
+    GetPage(name: AppRoutes.home, page: () => HomePage()),
+    GetPage(name: AppRoutes.addNote, page: () => AddNotePage()),
+    GetPage(name: AppRoutes.editNote, page: () => EditNotePage()),
+    GetPage(name: AppRoutes.settings, page: () => SettingsPage()),
   ];
 }
