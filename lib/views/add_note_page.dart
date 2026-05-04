@@ -2,28 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/note_controller.dart';
 import '../models/note_model.dart';
+import '../widgets/note_item_widget.dart';
 
 class AddNotePage extends StatelessWidget {
   AddNotePage({super.key});
+
   final NoteController controller = Get.find();
 
   final titleController = TextEditingController();
   final contentController = TextEditingController();
+
   final items = <NoteItem>[].obs;
+  final lastAddedIndex = (-1).obs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+
       appBar: AppBar(
         backgroundColor: Colors.blue[700],
-        elevation: 2,
-        title: const Text(
-          "Add Note",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        title: const Text("Add Note", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.blue[300]!, Colors.blue[700]!],
@@ -31,161 +36,121 @@ class AddNotePage extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Title + content card
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 8),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                        labelText: "Note Title",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: contentController,
-                      maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: "Contents ",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
 
-              // ✅ Tickable items list
-              Expanded(
-                child: Obx(() {
-                  return ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 6),
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: const [
-                            BoxShadow(color: Colors.black12, blurRadius: 4),
-                          ],
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  // ===== TITLE + CONTENT =====
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: titleController,
+                          decoration: const InputDecoration(
+                            labelText: "Note Title",
+                          ),
                         ),
-                        child: Row(
-                          children: [
-                            // Checkbox
-                            Checkbox(
-                              value: items[index].isTicked,
-                              onChanged: (val) {
-                                items[index] = items[index].copyWith(
-                                  isTicked: val ?? false,
-                                );
-                                items.refresh();
-                              },
-                            ),
-                            // Editable text
-                            Expanded(
-                              child: TextFormField(
-                                key: ValueKey(index),
-                                initialValue: items[index].text,
-                                onChanged: (val) {
-                                  items[index] = items[index].copyWith(
-                                    text: val,
-                                  );
-                                },
-                                decoration: const InputDecoration(
-                                  hintText: "Enter item",
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            // Delete button
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                items.removeAt(index);
-                                items.refresh();
-                              },
-                            ),
-                          ],
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: contentController,
+                          maxLines: 3,
+                          decoration: const InputDecoration(
+                            labelText: "Contents",
+                          ),
                         ),
-                      );
-                    },
-                  );
-                }),
-              ),
+                      ],
+                    ),
+                  ),
 
-              // Buttons
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.add),
-                        label: const Text("Add Tickable Item"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo[500],
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
-                          items.add(NoteItem(text: "", isTicked: false));
-                          items.refresh();
-                        },
-                      ),
+                  const SizedBox(height: 20),
+
+                  // ===== TICKABLE ITEMS =====
+                  Obx(() {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: items.length,
+                      itemBuilder: (_, index) {
+                        return NoteItemWidget(
+                          item: items[index],
+                          autoFocus: index == lastAddedIndex.value,
+                          onChanged: (val) {
+                            items[index] = items[index].copyWith(
+                              isTicked: val ?? false,
+                            );
+                            items.refresh();
+                          },
+                          onTextChanged: (val) {
+                            items[index] = items[index].copyWith(text: val);
+                          },
+                          onDelete: () {
+                            items.removeAt(index);
+                            items.refresh();
+                          },
+                        );
+                      },
+                    );
+                  }),
+
+                  const SizedBox(height: 10),
+
+                  // ===== ADD ITEM BUTTON =====
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: const Text("Add Tickable Item"),
+                      onPressed: () {
+                        items.add(NoteItem(text: ""));
+                        lastAddedIndex.value = items.length - 1;
+                        items.refresh();
+                      },
                     ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green[600],
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () async {
-                          final newNote = Note(
-                            title: titleController.text,
-                            content: contentController.text,
-                            items: items.toList(),
-                          );
-                          await controller.addNote(newNote);
-                          Get.back();
-                        },
-                        child: const Text(
-                          "Save Note",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // ===== SAVE NOTE BUTTON =====
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // remove empty items
+                        final filteredItems =
+                            items
+                                .where((item) => item.text.trim().isNotEmpty)
+                                .toList();
+
+                        final note = Note(
+                          title: titleController.text,
+                          content: contentController.text,
+                          items: filteredItems,
+                        );
+
+                        await controller.addNote(note);
+                        Get.back();
+                      },
+                      child: const Text("Save Note"),
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

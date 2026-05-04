@@ -59,7 +59,7 @@ class RegistrationPage extends StatelessWidget {
                   controller: controller.email,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.email),
-                    hintText: 'Email (must be Gmail)',
+                    hintText: 'Email ',
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(

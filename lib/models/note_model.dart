@@ -5,7 +5,7 @@ class Note {
 
   Note({required this.title, required this.content, required this.items});
 
-  // ✅ copyWith for immutability
+  // ✅ COPY
   Note copyWith({String? title, String? content, List<NoteItem>? items}) {
     return Note(
       title: title ?? this.title,
@@ -14,27 +14,29 @@ class Note {
     );
   }
 
-  // ✅ Convert to Map for storage
-  Map<String, dynamic> toMap() {
+  // ✅ TO JSON
+  Map<String, dynamic> toJson() {
     return {
       'title': title,
       'content': content,
-      'items': items.map((item) => item.toMap()).toList(),
+      'items': items.map((e) => e.toJson()).toList(),
     };
   }
 
-  // ✅ Create from Map
-  factory Note.fromMap(Map<String, dynamic> map) {
+  // ✅ FROM JSON (FIX FOR YOUR ERROR)
+  factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
-      title: map['title'] ?? '',
-      content: map['content'] ?? '',
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
       items:
-          (map['items'] as List<dynamic>)
-              .map((item) => NoteItem.fromMap(item))
+          (json['items'] as List<dynamic>? ?? [])
+              .map((e) => NoteItem.fromJson(e))
               .toList(),
     );
   }
 }
+
+// ================= ITEM =================
 
 class NoteItem {
   final String text;
@@ -42,7 +44,7 @@ class NoteItem {
 
   NoteItem({required this.text, this.isTicked = false});
 
-  // ✅ copyWith for immutability
+  // COPY
   NoteItem copyWith({String? text, bool? isTicked}) {
     return NoteItem(
       text: text ?? this.text,
@@ -50,16 +52,16 @@ class NoteItem {
     );
   }
 
-  // ✅ Convert to Map for storage
-  Map<String, dynamic> toMap() {
+  // TO JSON
+  Map<String, dynamic> toJson() {
     return {'text': text, 'isTicked': isTicked};
   }
 
-  // ✅ Create from Map
-  factory NoteItem.fromMap(Map<String, dynamic> map) {
+  // FROM JSON
+  factory NoteItem.fromJson(Map<String, dynamic> json) {
     return NoteItem(
-      text: map['text'] ?? '',
-      isTicked: map['isTicked'] ?? false,
+      text: json['text'] ?? '',
+      isTicked: json['isTicked'] ?? false,
     );
   }
 }

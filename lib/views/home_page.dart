@@ -5,7 +5,7 @@ import '../routes/app_routes.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  final NoteController controller = Get.put(NoteController());
+  final NoteController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {

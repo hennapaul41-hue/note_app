@@ -18,12 +18,12 @@ class NoteController extends GetxController {
     notes.assignAll(storedNotes);
   }
 
+  // ✅ ADD NOTE
   Future<void> addNote(Note note) async {
     final hasTitle = note.title.trim().isNotEmpty;
     final hasItems = note.items.isNotEmpty;
 
     if (!hasTitle && !hasItems) {
-      // ✅ Show feedback instead of silently ignoring
       Get.snackbar(
         "Empty Note",
         "Please add a title or items before saving.",
@@ -35,10 +35,13 @@ class NoteController extends GetxController {
     }
 
     notes.add(note);
-    await _storage.saveNotes(notes);
+
+    await _storage.saveNotes(notes.toList()); // ✅ FIX
+
     notes.refresh();
   }
 
+  // ✅ UPDATE NOTE
   Future<void> updateNote(int index, Note updatedNote) async {
     final hasTitle = updatedNote.title.trim().isNotEmpty;
     final hasItems = updatedNote.items.isNotEmpty;
@@ -56,28 +59,38 @@ class NoteController extends GetxController {
 
     if (index >= 0 && index < notes.length) {
       notes[index] = updatedNote;
-      await _storage.saveNotes(notes);
+
+      await _storage.saveNotes(notes.toList()); // ✅ FIX
+
       notes.refresh();
     }
   }
 
+  // ✅ DELETE NOTE
   Future<void> deleteNote(int index) async {
     if (index >= 0 && index < notes.length) {
       notes.removeAt(index);
-      await _storage.saveNotes(notes);
+
+      await _storage.saveNotes(notes.toList()); // ✅ FIX
+
       notes.refresh();
     }
   }
 
+  // ✅ TOGGLE ITEM
   Future<void> toggleItemTick(int noteIndex, int itemIndex) async {
     if (noteIndex >= 0 && noteIndex < notes.length) {
       final note = notes[noteIndex];
+
       if (itemIndex >= 0 && itemIndex < note.items.length) {
         note.items[itemIndex] = note.items[itemIndex].copyWith(
           isTicked: !note.items[itemIndex].isTicked,
         );
+
         notes[noteIndex] = note.copyWith(items: [...note.items]);
-        await _storage.saveNotes(notes);
+
+        await _storage.saveNotes(notes.toList()); // ✅ FIX
+
         notes.refresh();
       }
     }

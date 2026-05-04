@@ -2,50 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../services/local_storage.dart';
 import '../routes/app_routes.dart';
-import '../models/settings_model.dart';
 
 class RegistrationController extends GetxController {
+  // ✅ Controllers (MATCHES UI)
   final username = TextEditingController();
-  final password = TextEditingController();
   final email = TextEditingController();
+  final password = TextEditingController();
+
+  // ✅ Password visibility
   var isPasswordHidden = true.obs;
 
-  final LocalStorage storage = LocalStorage();
+  final storage = LocalStorage();
 
-  /// Sign up logic
-  Future<void> signUp() async {
-    if (username.text.trim().isNotEmpty &&
-        password.text.trim().isNotEmpty &&
-        email.text.trim().endsWith("@gmail.com")) {
-      // ✅ Save user data using SettingsModel
-      final settings = SettingsModel(
-        username: username.text.trim(),
-        email: email.text.trim(),
-        password: password.text.trim(),
-      );
-      await storage.setUserData(settings);
+  // ✅ SIGN UP FUNCTION
+  void signUp() async {
+    final name = username.text.trim();
+    final mail = email.text.trim();
+    final pass = password.text.trim();
 
-      await storage.setLoggedIn(true);
-      Get.offAllNamed(AppRoutes.home);
-
-      Get.snackbar("Success", "Account created successfully!");
-    } else {
-      Get.snackbar("Error", "Enter valid Username, Password & Gmail");
+    // VALIDATION
+    if (name.isEmpty) {
+      Get.snackbar("Error", "Username required");
+      return;
     }
-  }
 
-  /// Logout logic
-  Future<void> logout() async {
-    await storage.clearSession(); // ✅ clears saved session
-    Get.offAllNamed(AppRoutes.welcome); // ✅ navigate back to WelcomePage
-    Get.snackbar("Logout", "You have been logged out");
+    if (mail.isEmpty) {
+      Get.snackbar("Error", "Email required");
+      return;
+    }
+
+    if (pass.isEmpty) {
+      Get.snackbar("Error", "Password required");
+      return;
+    }
+
+    // SAVE USER
+    await storage.saveUser(username: name, email: mail, password: pass);
+
+    Get.snackbar("Success", "Account created");
+
+    // NAVIGATE
+    Get.offAllNamed(AppRoutes.home);
   }
 
   @override
   void onClose() {
     username.dispose();
-    password.dispose();
     email.dispose();
+    password.dispose();
     super.onClose();
   }
 }
