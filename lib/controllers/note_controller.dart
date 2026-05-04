@@ -36,7 +36,7 @@ class NoteController extends GetxController {
 
     notes.add(note);
 
-    await _storage.saveNotes(notes.toList()); // ✅ FIX
+    await _storage.saveNotes(List<Note>.from(notes)); // safer copy
 
     notes.refresh();
   }
@@ -58,9 +58,11 @@ class NoteController extends GetxController {
     }
 
     if (index >= 0 && index < notes.length) {
-      notes[index] = updatedNote;
+      notes[index] = updatedNote.copyWith(
+        items: updatedNote.items.where((i) => i.text.trim().isNotEmpty).toList(),
+      );
 
-      await _storage.saveNotes(notes.toList()); // ✅ FIX
+      await _storage.saveNotes(List<Note>.from(notes));
 
       notes.refresh();
     }
@@ -71,7 +73,7 @@ class NoteController extends GetxController {
     if (index >= 0 && index < notes.length) {
       notes.removeAt(index);
 
-      await _storage.saveNotes(notes.toList()); // ✅ FIX
+      await _storage.saveNotes(List<Note>.from(notes));
 
       notes.refresh();
     }
@@ -83,13 +85,14 @@ class NoteController extends GetxController {
       final note = notes[noteIndex];
 
       if (itemIndex >= 0 && itemIndex < note.items.length) {
-        note.items[itemIndex] = note.items[itemIndex].copyWith(
-          isTicked: !note.items[itemIndex].isTicked,
+        final updatedItems = [...note.items];
+        updatedItems[itemIndex] = updatedItems[itemIndex].copyWith(
+          isTicked: !updatedItems[itemIndex].isTicked,
         );
 
-        notes[noteIndex] = note.copyWith(items: [...note.items]);
+        notes[noteIndex] = note.copyWith(items: updatedItems);
 
-        await _storage.saveNotes(notes.toList()); // ✅ FIX
+        await _storage.saveNotes(List<Note>.from(notes));
 
         notes.refresh();
       }
