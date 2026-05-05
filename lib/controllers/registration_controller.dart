@@ -4,7 +4,7 @@ import '../services/local_storage.dart';
 import '../routes/app_routes.dart';
 
 class RegistrationController extends GetxController {
-  // ✅ Controllers (MATCHES UI)
+  // ✅ Controllers
   final username = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();
@@ -31,8 +31,23 @@ class RegistrationController extends GetxController {
       return;
     }
 
+    if (!mail.endsWith("@gmail.com")) {
+      Get.snackbar("Error", "Email must be a Gmail account");
+      return;
+    }
+
     if (pass.isEmpty) {
       Get.snackbar("Error", "Password required");
+      return;
+    }
+
+    if (pass.length < 6) {
+      Get.snackbar("Error", "Password must be at least 6 characters");
+      return;
+    }
+
+    if (name == pass) {
+      Get.snackbar("Error", "Username and password must be different");
       return;
     }
 

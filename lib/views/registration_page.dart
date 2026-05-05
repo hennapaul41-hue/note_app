@@ -34,7 +34,7 @@ class RegistrationPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  "Sign up to start saving notes",
+                  "Register to start saving notes",
                   style: TextStyle(color: Colors.white70),
                 ),
                 const SizedBox(height: 40),
@@ -112,7 +112,7 @@ class RegistrationPage extends StatelessWidget {
                     ),
                     onPressed: controller.signUp,
                     child: const Text(
-                      "SIGN UP",
+                      "REGISTER",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

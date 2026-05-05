@@ -42,6 +42,19 @@ class SettingsController extends GetxController {
     passwordController.text = originalPassword;
   }
 
+  // --- Helper: cancel all edits when switching ---
+  void cancelAllEdits() {
+    isEditingName.value = false;
+    isEditingEmail.value = false;
+    isEditingPassword.value = false;
+    nameError.value = "";
+    emailError.value = "";
+    passwordError.value = "";
+    usernameController.text = originalName;
+    emailController.text = originalEmail;
+    passwordController.text = originalPassword;
+  }
+
   // SAVE NAME
   void saveName() async {
     final newValue = usernameController.text.trim();
@@ -80,6 +93,11 @@ class SettingsController extends GetxController {
 
     if (newValue.isEmpty) {
       emailError.value = "Required";
+      return;
+    }
+
+    if (!newValue.endsWith("@gmail.com")) {
+      emailError.value = "Email must end with @gmail.com";
       return;
     }
 

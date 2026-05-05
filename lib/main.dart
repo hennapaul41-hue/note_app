@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Note App',
       initialRoute: initialRoute,
-      getPages: AppPages.pages, // must include all routes
+      getPages: AppPages.pages,
       theme: ThemeData(primarySwatch: Colors.blue),
     );
   }

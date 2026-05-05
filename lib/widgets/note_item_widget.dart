@@ -7,6 +7,7 @@ class NoteItemWidget extends StatelessWidget {
   final Function(String) onTextChanged;
   final VoidCallback onDelete;
   final bool autoFocus;
+  final VoidCallback? onSubmitted; // ✅ new callback
 
   const NoteItemWidget({
     super.key,
@@ -15,6 +16,7 @@ class NoteItemWidget extends StatelessWidget {
     required this.onTextChanged,
     required this.onDelete,
     this.autoFocus = false,
+    this.onSubmitted, // ✅ optional
   });
 
   @override
@@ -32,9 +34,14 @@ class NoteItemWidget extends StatelessWidget {
           Checkbox(value: item.isTicked, onChanged: onChanged),
           Expanded(
             child: TextFormField(
-              autofocus: autoFocus, // ✅ KEY FIX
+              autofocus: autoFocus,
               initialValue: item.text,
               onChanged: onTextChanged,
+              onFieldSubmitted: (_) {
+                if (onSubmitted != null) {
+                  onSubmitted!(); // ✅ trigger add new item
+                }
+              },
               decoration: const InputDecoration(
                 hintText: "Enter item",
                 border: InputBorder.none,

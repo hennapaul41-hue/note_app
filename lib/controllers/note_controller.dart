@@ -59,7 +59,8 @@ class NoteController extends GetxController {
 
     if (index >= 0 && index < notes.length) {
       notes[index] = updatedNote.copyWith(
-        items: updatedNote.items.where((i) => i.text.trim().isNotEmpty).toList(),
+        items:
+            updatedNote.items.where((i) => i.text.trim().isNotEmpty).toList(),
       );
 
       await _storage.saveNotes(List<Note>.from(notes));

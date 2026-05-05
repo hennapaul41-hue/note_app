@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../controllers/settings_controller.dart';
 
 class EditableFieldWidget extends StatelessWidget {
   final String label;
@@ -29,6 +30,8 @@ class EditableFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingsController = Get.find<SettingsController>();
+
     return Obx(() {
       final hasChanged =
           controller.text != originalValue && controller.text.trim().isNotEmpty;
@@ -51,14 +54,16 @@ class EditableFieldWidget extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-
             const SizedBox(height: 8),
-
             TextField(
               controller: controller,
               obscureText:
                   isPassword ? !(isPasswordVisible?.value ?? false) : false,
-              onTap: () => isEditing.value = true,
+              onTap: () {
+                // ✅ Cancel other edits before enabling this one
+                settingsController.cancelAllEdits();
+                isEditing.value = true;
+              },
               onChanged: (val) {
                 isEditing.value = true;
                 if (val.trim().isEmpty) {
@@ -87,7 +92,6 @@ class EditableFieldWidget extends StatelessWidget {
                         : null,
               ),
             ),
-
             if (isEditing.value)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
@@ -95,7 +99,10 @@ class EditableFieldWidget extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: onSave,
+                        onPressed:
+                            hasChanged
+                                ? onSave
+                                : null, // ✅ disable if unchanged
                         child: const Text("Update"),
                       ),
                     ),

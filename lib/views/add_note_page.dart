@@ -19,7 +19,6 @@ class AddNotePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-
       appBar: AppBar(
         backgroundColor: Colors.blue[700],
         title: const Text("Add Note", style: TextStyle(color: Colors.white)),
@@ -28,6 +27,7 @@ class AddNotePage extends StatelessWidget {
           PopupMenuButton<String>(
             onSelected: (value) async {
               if (value == 'add') {
+                // ✅ Add new tickable item
                 items.add(NoteItem(text: ""));
                 lastAddedIndex.value = items.length - 1;
                 items.refresh();
@@ -56,7 +56,6 @@ class AddNotePage extends StatelessWidget {
           ),
         ],
       ),
-
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -110,6 +109,7 @@ class AddNotePage extends StatelessWidget {
                     itemBuilder: (_, index) {
                       return NoteItemWidget(
                         item: items[index],
+                        // ✅ Autofocus only the last added item
                         autoFocus: index == lastAddedIndex.value,
                         onChanged: (val) {
                           items[index] = items[index].copyWith(

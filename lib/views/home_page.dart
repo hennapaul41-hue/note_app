@@ -102,25 +102,32 @@ class HomePage extends StatelessWidget {
                         ),
                       ],
 
-                      // Action buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              // ✅ Pass only the index
+                      // Overflow menu (3 dots) with plain text
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: PopupMenuButton<String>(
+                          onSelected: (value) {
+                            if (value == 'edit') {
                               Get.toNamed(
                                 AppRoutes.editNote,
                                 arguments: {'noteIndex': noteIndex},
                               );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => controller.deleteNote(noteIndex),
-                          ),
-                        ],
+                            } else if (value == 'delete') {
+                              controller.deleteNote(noteIndex);
+                            }
+                          },
+                          itemBuilder:
+                              (context) => [
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  child: Text('Edit'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                        ),
                       ),
                     ],
                   ),
